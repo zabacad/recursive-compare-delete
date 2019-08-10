@@ -8,11 +8,6 @@ import os
 import sys
 
 
-# TODO
-# - Make sure old and new aren't the same
-# - Skip whole directory if it doesn't exist
-
-
 def main():
     # Piping in PowerShell sets an encoding that can't handle some of Window's
     # own filenames.
