@@ -2,7 +2,6 @@
 
 from pathlib import Path
 import argparse
-import hashlib
 import logging
 import os
 import sys
@@ -65,7 +64,7 @@ def recurse(old_path, new_path, indent=0, deleting=False):
         elif not old_f.stat().st_size == new_f_path.stat().st_size:
             print(f"{f_indent}Changed: {old_f_rel}")
 
-        elif not checksum_match(old_f_path, new_f_path):
+        elif not bytewise_match(old_f_path, new_f_path):
             print(f"{f_indent}Changed: {old_f_rel}")
 
         else:
@@ -96,19 +95,21 @@ def recurse(old_path, new_path, indent=0, deleting=False):
                 print(f"{d_indent}Failed to remove: {old_path}")
 
 
-def checksum_match(a, b):
-    hash_a = hashlib.md5()
-    hash_b = hashlib.md5()
+def bytewise_match(a, b, chunk=4096):
+    a_f = open(a, 'rb')
+    b_f = open(b, 'rb')
 
-    with open(a, 'rb') as a_f:
-        for chunk in iter(lambda: a_f.read(4096), b''):
-            hash_a.update(chunk)
+    while True:
+        a_chunk = a_f.read(chunk)
+        b_chunk = b_f.read(chunk)
 
-    with open(b, 'rb') as b_f:
-        for chunk in iter(lambda: b_f.read(4096), b''):
-            hash_b.update(chunk)
+        if a_chunk != b_chunk:
+            return False
 
-    return hash_a.digest() == hash_b.digest()
+        if (len(a_chunk) < chunk):
+            break
+
+    return True
 
 
 if __name__ == '__main__':
