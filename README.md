@@ -9,7 +9,7 @@ Any *old* file will only be deleted if:
 
   - The script is given the `-d` flag.
   - There is a *new* file with the exact same path and name.
-  - The old and new file are the exact name size and checksum (MD5).
+  - The old and new file are the exact name size and content.
 
 ## Use
 
